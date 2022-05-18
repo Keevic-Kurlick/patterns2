@@ -5,7 +5,7 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.elements.Login;
@@ -17,9 +17,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 public class AuthTest {
-    private static RegistrationDTO user = DataGenerator
-            .RegistrationDataGenerator
-            .generateData(RegistrationDTO.STATUS_ACTIVE);
+    private static RegistrationDTO user;
 
     private static final RequestSpecification requestSpec = new RequestSpecBuilder()
             .setBaseUri("http://localhost")
@@ -29,14 +27,18 @@ public class AuthTest {
             .log(LogDetail.ALL)
             .build();
 
-    @BeforeAll
-    static void setUpUserActiveStatus() {
-        Login.postUser(requestSpec, user);
-    }
-
     @BeforeEach
     void setUp() {
         open("http://localhost:9999");
+        user = DataGenerator
+                .RegistrationDataGenerator
+                .generateData(RegistrationDTO.STATUS_ACTIVE);
+        Login.postUser(requestSpec, user);
+    }
+
+    @AfterEach
+    void tearDown() {
+        user = null;
     }
 
     @Test
@@ -55,7 +57,7 @@ public class AuthTest {
 
     @Test
     void authUnregisteredUser() {
-        user = new RegistrationDTO("Karlson", "sdsdsd");
+        user = DataGenerator.RegistrationDataGenerator.generateData(RegistrationDTO.STATUS_ACTIVE);
         Login.login(user);
         $(".notification__title").shouldHave(text("Ошибка"));
     }
@@ -72,22 +74,32 @@ public class AuthTest {
 
     @Test
     void authPreregisteredUserWithIncorrectPasswordActiveStatus(){
-
+        user = new RegistrationDTO(user.getLogin(), DataGenerator.RegistrationDataGenerator.generatePassword(), RegistrationDTO.STATUS_ACTIVE);
+        Login.login(user);
+        $(".notification__title").shouldHave(text("Ошибка"));
     }
 
     @Test
     void authPreregisteredUserWithIncorrectLoginActiveStatus(){
-
+        user = new RegistrationDTO(DataGenerator.RegistrationDataGenerator.generateLogin(), user.getPassword(), RegistrationDTO.STATUS_ACTIVE);
+        Login.login(user);
+        $(".notification__title").shouldHave(text("Ошибка"));
     }
 
     @Test
     void authPreregisteredUserWithIncorrectPasswordBlockedStatus(){
-
+        user = new RegistrationDTO(user.getLogin(), DataGenerator.RegistrationDataGenerator.generatePassword(), RegistrationDTO.STATUS_BLOCKED);
+        Login.login(user);
+        $(".notification__title").shouldHave(text("Ошибка"));
+        Login.changeStatus(requestSpec, user, RegistrationDTO.STATUS_ACTIVE);
     }
 
     @Test
     void authPreregisteredUserWithIncorrectLoginBlockedStatus(){
-
+        user = new RegistrationDTO(DataGenerator.RegistrationDataGenerator.generateLogin(), user.getLogin(), RegistrationDTO.STATUS_BLOCKED);
+        Login.login(user);
+        $(".notification__title").shouldHave(text("Ошибка"));
+        Login.changeStatus(requestSpec, user, RegistrationDTO.STATUS_ACTIVE);
     }
 
 }

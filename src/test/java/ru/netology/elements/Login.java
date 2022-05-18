@@ -23,6 +23,16 @@ public class Login {
                 .statusCode(200);
     }
 
+    public static void postUser(RequestSpecification requestSpec, RegistrationDTO user, int statusCode) {
+        given()
+                .spec(requestSpec)
+                .body(user)
+                .when()
+                .post("/api/system/users")
+                .then()
+                .statusCode(statusCode);
+    }
+
     public static void changeStatus(RequestSpecification requestSpec, RegistrationDTO user, String status) {
         user.setStatus(status);
         postUser(requestSpec, user);

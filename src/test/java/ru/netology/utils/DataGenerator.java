@@ -4,8 +4,6 @@ import com.github.javafaker.Faker;
 import lombok.experimental.UtilityClass;
 import ru.netology.entities.RegistrationDTO;
 
-import java.util.Locale;
-
 @UtilityClass
 public class DataGenerator {
 
@@ -13,8 +11,18 @@ public class DataGenerator {
     public static class RegistrationDataGenerator {
 
         public static RegistrationDTO generateData(String status) {
-            Faker faker = new Faker(new Locale("ru"));
+            Faker faker = new Faker();
             return new RegistrationDTO(faker.name().firstName(), faker.internet().password(), status);
+        }
+
+        public static String generateLogin() {
+            Faker faker = new Faker();
+            return faker.name().firstName();
+        }
+
+        public static String generatePassword() {
+            Faker faker = new Faker();
+            return faker.internet().password();
         }
     }
 }
