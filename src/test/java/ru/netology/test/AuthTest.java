@@ -52,7 +52,6 @@ public class AuthTest {
         Login.changeStatus(requestSpec, user, RegistrationDTO.STATUS_BLOCKED);
         Login.login(user);
         $(".notification__title").shouldHave(text("Ошибка"));
-        Login.changeStatus(requestSpec, user, RegistrationDTO.STATUS_ACTIVE);
     }
 
     @Test
@@ -91,7 +90,6 @@ public class AuthTest {
         user = new RegistrationDTO(user.getLogin(), DataGenerator.RegistrationDataGenerator.generatePassword(), RegistrationDTO.STATUS_BLOCKED);
         Login.login(user);
         $(".notification__title").shouldHave(text("Ошибка"));
-        Login.changeStatus(requestSpec, user, RegistrationDTO.STATUS_ACTIVE);
     }
 
     @Test
@@ -99,7 +97,6 @@ public class AuthTest {
         user = new RegistrationDTO(DataGenerator.RegistrationDataGenerator.generateLogin(), user.getLogin(), RegistrationDTO.STATUS_BLOCKED);
         Login.login(user);
         $(".notification__title").shouldHave(text("Ошибка"));
-        Login.changeStatus(requestSpec, user, RegistrationDTO.STATUS_ACTIVE);
     }
 
 }
