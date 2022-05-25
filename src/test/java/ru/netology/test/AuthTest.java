@@ -59,7 +59,7 @@ public class AuthTest {
 
     @Test
     void authWithEmptyValues() {
-        activeUser = new RegistrationDTO(" ", " ");
+        activeUser = new RegistrationDTO(" ", " ", RegistrationDTO.STATUS_ACTIVE);
         Login.login(activeUser);
         $x("//*[@data-test-id = \"login\"]//span[@class = \"input__sub\"]").
                 shouldHave(text("Поле обязательно для заполнения"));
